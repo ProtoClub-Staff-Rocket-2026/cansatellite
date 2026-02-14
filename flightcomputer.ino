@@ -21,6 +21,10 @@
   #define SERIAL_PRINTLN(x) ((void)0)
 #endif
 
+// ====== CSV LOGGING ======
+// Comment out the next line to disable CSV file logging
+#define ENABLE_CSV
+
 // ====== WIFI & SERVER ======
 const char* ssid     = "";
 const char* password = "";
@@ -125,6 +129,7 @@ void resetLogSession() {
   sessionStartMs = millis();
   sessionStartEpoch = nowEpoch();
   
+#ifdef ENABLE_CSV
   // Create new CSV file
   csvFilename = "/" + sessionId + ".csv";
   File f = LittleFS.open(csvFilename, "w");
@@ -136,9 +141,11 @@ void resetLogSession() {
   } else {
     SERIAL_PRINTLN("ERROR: Failed to create CSV file");
   }
+#endif
 }
 
 void appendToCsv(const LogSample& s, float velocity) {
+#ifdef ENABLE_CSV
   File f = LittleFS.open(csvFilename, "a");
   if (!f) {
     SERIAL_PRINTLN("ERROR: Failed to open CSV for append");
@@ -166,6 +173,7 @@ void appendToCsv(const LogSample& s, float velocity) {
   
   f.print(line);
   f.close();
+#endif
 }
 
 bool sendToServer(const LogSample& s, float velocity) {
