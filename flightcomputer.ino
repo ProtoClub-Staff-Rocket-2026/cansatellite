@@ -5,8 +5,8 @@
 #include <math.h>
 
 // ====== WIFI ======
-const char* ssid     = "...";
-const char* password = "...";
+const char* ssid     = "";
+const char* password = "";
 
 // ====== SENSOR / CALIB ======
 const float SEA_LEVEL_HPA = 1038;   // QNH (hPa) korkeuden laskentaan
