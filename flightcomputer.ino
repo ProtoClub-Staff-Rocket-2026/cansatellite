@@ -32,6 +32,7 @@ const char* SERVER_URL = "http://192.168.1.100:8000/events/";
 
 // ====== SENSOR / CALIB ======
 const float SEA_LEVEL_HPA = 1038;   // QNH (hPa) korkeuden laskentaan
+const uint16_t LOG_INTERVAL_MS = 500;  // Logging frequency in milliseconds (500ms = 2Hz)
 
 // ====== GLOBALS ======
 Adafruit_BMP085 bmp;
@@ -216,7 +217,7 @@ void maybeLogSample() {
 
   // loggaa 2 Hz (500 ms) kun LOGGING
   if (flightState != LOGGING) return;
-  if (nowMs - lastMs < 500) return;
+  if (nowMs - lastMs < LOG_INTERVAL_MS) return;
   lastMs = nowMs;
 
   LogSample s;
