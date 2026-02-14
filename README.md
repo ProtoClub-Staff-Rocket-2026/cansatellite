@@ -5,6 +5,9 @@
 The flight computer sends telemetry data to Ground Control server and logs all
 data to CSV files on the device's internal flash storage (LittleFS).
 
+This project is built for the Dasduino Connect with ESP8266. When using Arduino 
+IDE install the `1.0.1` version from the board manager.
+
 ## Before Uploading
 
 ### 1. Configure WiFi and Server
