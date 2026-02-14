@@ -7,6 +7,20 @@
 #include <math.h>
 #include <time.h>
 
+// ====== DEV MODE ======
+// Comment out the next line to disable all Serial output for production
+#define DEV_MODE
+
+#ifdef DEV_MODE
+  #define SERIAL_BEGIN(baud) Serial.begin(baud)
+  #define SERIAL_PRINT(x) Serial.print(x)
+  #define SERIAL_PRINTLN(x) Serial.println(x)
+#else
+  #define SERIAL_BEGIN(baud) ((void)0)
+  #define SERIAL_PRINT(x) ((void)0)
+  #define SERIAL_PRINTLN(x) ((void)0)
+#endif
+
 // ====== WIFI & SERVER ======
 const char* ssid     = "";
 const char* password = "";
@@ -117,17 +131,17 @@ void resetLogSession() {
   if (f) {
     f.println("session,timestamp,identifier,t_ms,ts_epoch,tempC,pressure_hPa,alt_m,velocity,rssi_dBm,cpu");
     f.close();
-    Serial.print("CSV file created: ");
-    Serial.println(csvFilename);
+    SERIAL_PRINT("CSV file created: ");
+    SERIAL_PRINTLN(csvFilename);
   } else {
-    Serial.println("ERROR: Failed to create CSV file");
+    SERIAL_PRINTLN("ERROR: Failed to create CSV file");
   }
 }
 
 void appendToCsv(const LogSample& s, float velocity) {
   File f = LittleFS.open(csvFilename, "a");
   if (!f) {
-    Serial.println("ERROR: Failed to open CSV for append");
+    SERIAL_PRINTLN("ERROR: Failed to open CSV for append");
     return;
   }
   
@@ -177,13 +191,13 @@ bool sendToServer(const LogSample& s, float velocity) {
   http.end();
   
   if (httpCode == 204 || httpCode == 200) {
-    Serial.print("Server POST OK (");
-    Serial.print(httpCode);
-    Serial.println(")");
+    SERIAL_PRINT("Server POST OK (");
+    SERIAL_PRINT(httpCode);
+    SERIAL_PRINTLN(")");
     return true;
   } else {
-    Serial.print("Server POST failed: ");
-    Serial.println(httpCode);
+    SERIAL_PRINT("Server POST failed: ");
+    SERIAL_PRINTLN(httpCode);
     return false;
   }
 }
@@ -231,47 +245,47 @@ void maybeLogSample() {
 }
 
 void setup() {
-  Serial.begin(115200);
-  Serial.println();
+  SERIAL_BEGIN(115200);
+  SERIAL_PRINTLN();
 
   // I2C: SDA=D2(GPIO4), SCL=D1(GPIO5)
   Wire.begin(4, 5);
 
-  Serial.print("BMP180 init... ");
+  SERIAL_PRINT("BMP180 init... ");
   if (!bmp.begin()) {
-    Serial.println("FAILED");
+    SERIAL_PRINTLN("FAILED");
     while (true) delay(1000);
   }
-  Serial.println("OK");
+  SERIAL_PRINTLN("OK");
 
   // Initialize LittleFS
-  Serial.print("LittleFS init... ");
+  SERIAL_PRINT("LittleFS init... ");
   if (!LittleFS.begin()) {
-    Serial.println("FAILED");
+    SERIAL_PRINTLN("FAILED");
     while (true) delay(1000);
   }
-  Serial.println("OK");
+  SERIAL_PRINTLN("OK");
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
+  SERIAL_PRINT("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    SERIAL_PRINT(".");
   }
-  Serial.println();
-  Serial.print("IP: ");
-  Serial.println(WiFi.localIP());
+  SERIAL_PRINTLN();
+  SERIAL_PRINT("IP: ");
+  SERIAL_PRINTLN(WiFi.localIP());
 
   // NTP time
   setupTimeNtp();
-  Serial.println("Waiting for NTP sync...");
+  SERIAL_PRINTLN("Waiting for NTP sync...");
   delay(2000);
 
   // Start logging automatically on boot
   resetLogSession();
   flightState = LOGGING;
-  Serial.println("Logging started");
+  SERIAL_PRINTLN("Logging started");
 }
 
 void loop() {
@@ -282,11 +296,11 @@ void loop() {
   static uint32_t lastStatusMs = 0;
   if (millis() - lastStatusMs > 10000) {
     lastStatusMs = millis();
-    Serial.print("Status: samples=");
-    Serial.print(logCount);
-    Serial.print(", session=");
-    Serial.print(sessionId);
-    Serial.print(", WiFi=");
-    Serial.println(WiFi.status() == WL_CONNECTED ? "OK" : "DISCONNECTED");
+    SERIAL_PRINT("Status: samples=");
+    SERIAL_PRINT(logCount);
+    SERIAL_PRINT(", session=");
+    SERIAL_PRINT(sessionId);
+    SERIAL_PRINT(", WiFi=");
+    SERIAL_PRINTLN(WiFi.status() == WL_CONNECTED ? "OK" : "DISCONNECTED");
   }
 }
