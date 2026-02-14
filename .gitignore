@@ -1,0 +1,53 @@
+# Arduino/ESP8266 Build Artifacts
+*.hex
+*.elf
+*.bin
+*.map
+*.eep
+*.lss
+*.sym
+*.o
+*.d
+
+# Arduino IDE
+*.ino.bak
+*.ino.backup
+.build/
+build/
+
+# PlatformIO (if ever used)
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Session/plan files (Copilot workspace)
+.copilot/
+
+# Local configuration (if credentials are ever moved to separate file)
+secrets.h
+credentials.h
+config.local.h
